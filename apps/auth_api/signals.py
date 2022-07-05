@@ -10,5 +10,7 @@ from .models import Profile
 @receiver(post_save, sender=User)
 def create_profile(sender, instance, created, **kwargs):
     if created:
-        print("Creating profile for new user")
-        print(instance)
+        Profile.objects.create(
+            user=instance,
+            display_name=f"{instance.first_name} {instance.last_name}",
+        )
