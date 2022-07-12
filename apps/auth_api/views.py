@@ -6,9 +6,9 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import generics
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.permissions import AllowAny, IsAdminUser
+from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from .serializers import UserSerializer, RegisterSerializer
+from .serializers import UserSerializer, RegisterSerializer, PasswordChangeSerializer
 from .models import Profile
 
 # generate token for user
@@ -39,3 +39,18 @@ class UserRegister(APIView):
 class UserProfile(ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = UserSerializer
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+# user password change view
+
+
+class UserChangePasswordView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, format=None):
+        serializer = PasswordChangeSerializer(
+            data=request.data, context={'user': request.user})
+        serializer.is_valid(raise_exception=True)
+        return Response({'msg': 'Password Changed Successfully'}, status=status.HTTP_200_OK)
