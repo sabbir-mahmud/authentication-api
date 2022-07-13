@@ -14,3 +14,7 @@ def create_profile(sender, instance, created, **kwargs):
             user=instance,
             display_name=f"{instance.first_name} {instance.last_name}",
         )
+    else:
+        Profile.objects.filter(user=instance).update(
+            display_name=f"{instance.first_name} {instance.last_name}"
+        )
